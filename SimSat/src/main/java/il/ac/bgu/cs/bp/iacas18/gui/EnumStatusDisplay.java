@@ -4,14 +4,13 @@ import java.awt.Color;
 import java.awt.GridLayout;
 import java.util.EnumMap;
 import java.util.Map;
-import javax.swing.BoxLayout;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
+import javax.swing.border.BevelBorder;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
-import javax.swing.border.LineBorder;
 
 /**
  *
@@ -39,13 +38,17 @@ public class EnumStatusDisplay<T extends Enum> extends JComponent {
     
     private void setup() {
         T[] enumConstants = presentedEnum.getEnumConstants();
-        setLayout( new GridLayout(1, enumConstants.length) );
-        LineBorder lineBrd = new LineBorder(Color.black, 1, true);
-        CompoundBorder brd = new CompoundBorder(lineBrd, new EmptyBorder(5, 5, 5, 5));
-        brd = new CompoundBorder(new EmptyBorder(0, 0, 0, 2), brd);
+        GridLayout gridLayout = new GridLayout(1, enumConstants.length);
+        gridLayout.setHgap(4);
+        setLayout(gridLayout);
+        
+        Border brd = new BevelBorder(BevelBorder.LOWERED);
+        brd = new CompoundBorder(brd, new EmptyBorder(4,4,4,4));
+        
         for ( T e : enumConstants ) {
             JLabel lbl = new JLabel( e.name() );
             lbl.setOpaque(true);
+            
             lbl.setHorizontalAlignment(SwingConstants.CENTER);
             labels.put(e, lbl);
             lbl.setBorder(brd);
@@ -59,6 +62,6 @@ public class EnumStatusDisplay<T extends Enum> extends JComponent {
     
     private void updateStyle( JLabel lbl, boolean isSelected ) {
         lbl.setBackground( isSelected ? new Color(220, 255, 230) : new Color(100,120,100) );
-        lbl.setForeground( isSelected ? new Color(0, 0, 0) : new Color(80,80,80) );
+        lbl.setForeground( isSelected ? new Color(0, 0, 0) : new Color(190,200,190) );
     }
 }

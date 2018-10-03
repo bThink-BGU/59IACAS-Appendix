@@ -67,7 +67,7 @@ bp.registerBThread("ADCS Mode Switch logic", function () {
 
     /* ongoing */
     while (true) {
-        aDCSEvent = bp.sync({waitFor: [ADCSTelem, bp.Event("ActivePass"), bp.Event("PassDone!")]});
+        aDCSEvent = bp.sync({waitFor: [ADCSTelem, bp.Event("ActivePass"), bp.Event("PassDone")]});
         bp.sync({request: bp.Event("SetEPSMode-Low")});
         if (aDCSEvent.equals(bp.Event("ActivePayloadPass"))) {
             activePass = true;
