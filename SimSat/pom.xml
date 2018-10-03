@@ -9,12 +9,19 @@
     
     <version>0.1-DEV</version>
     <packaging>jar</packaging>
-
+    
+    <repositories>
+        <repository>
+          <id>my-local-repo</id>
+          <url>file://${basedir}/lib</url>
+        </repository>
+    </repositories>
+    
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <exec.mainClass>il.ac.bgu.cs.bp.iacas18.SimSat</exec.mainClass>
+        <exec.mainClass>il.ac.bgu.cs.bp.iacas18.gui.MainWindowCtrl</exec.mainClass>
     </properties>
 
     <dependencies>
@@ -22,6 +29,11 @@
             <groupId>com.github.bthink-bgu</groupId>
             <artifactId>BPjs</artifactId>
             <version>0.9.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org</groupId>
+            <artifactId>panelmatic</artifactId>
+            <version>1</version>
         </dependency>
     </dependencies>
 </project>
