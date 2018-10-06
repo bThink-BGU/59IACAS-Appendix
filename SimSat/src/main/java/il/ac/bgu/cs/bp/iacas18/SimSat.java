@@ -39,7 +39,7 @@ public class SimSat {
             int v = 50;
             while (true) {
                 try {
-                    Thread.sleep(400);
+                    Thread.sleep(100);
                     v = (int) (30 + Math.round(50 * Math.abs(Math.sin(Math.PI * j / 360))));
                     guir.pnl.lblVBatt.setText(new String().valueOf(v));
                     j++;
@@ -55,7 +55,7 @@ public class SimSat {
             int i = 1;
             while (true) {
                 try {
-                    Thread.sleep(200);
+                    Thread.sleep(50);
                     guir.pnl.lblTime.setText(new String().valueOf(i));
                     i++;
 
@@ -165,6 +165,12 @@ public class SimSat {
                     System.out.println("ADCS Set To PayloadPointing");
                     guir.AdcSMode = ADCSTelemetry.ADCSMode.PayloadPointing;
                     guir.pnl.stsAdcsMode.setValue(ADCSTelemetry.ADCSMode.PayloadPointing);
+                }
+                
+                if (theEvent.equals(StaticEvents.PassDone)) {
+                    System.out.println("PassDone requested");
+                    guir.pnl.btnPassStart.setEnabled(true);
+                    guir.pnl.btnPassEnd.setEnabled(false);
                 }
             }
         });
