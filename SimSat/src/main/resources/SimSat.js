@@ -1,4 +1,5 @@
 /* global bp */
+importPackage(Packages.il.ac.bgu.cs.bp.iacas18.events);
 
 ///////////////
 // Constants
@@ -24,11 +25,11 @@ bp.registerBThread("EPS - Turn ON/OFF logic", function () {
     /* Init */
     var ePSTelem = bp.sync({waitFor: [EPSTelem]});
     if (ePSTelem.vBatt >= good_Min) {
-        bp.sync({request: bp.Event("SetEPSMode-Good")});
+        bp.sync({request: bp.Event("SetEPSModeGood")});
     } else if (ePSTelem.vBatt >= low_Min) {
-        bp.sync({request: bp.Event("SetEPSMode-Low")});
+        bp.sync({request: bp.Event("SetEPSModeLow")});
     } else {
-        bp.sync({request: bp.Event("SetEPSMode-Critical")});
+        bp.sync({request: bp.Event("SetEPSModeCritical")});
     }
 
     /* ongoing */
@@ -37,22 +38,22 @@ bp.registerBThread("EPS - Turn ON/OFF logic", function () {
 
         if (ePSTelem.currentEPSMode == "Good") {
             if (ePSTelem.vBatt < good_Min) {
-                bp.sync({request: bp.Event("SetEPSMode-Low")});
+                bp.sync({request: bp.Event("SetEPSModeLow")});
             }
         }
 
         if (ePSTelem.currentEPSMode == "Low") {
             if (ePSTelem.vBatt > low_Max) {
-                bp.sync({request: bp.Event("SetEPSMode-Good")});
+                bp.sync({request: bp.Event("SetEPSModeGood")});
             }
             if (ePSTelem.vBatt < low_Min) {
-                bp.sync({request: bp.Event("SetEPSMode-Critical")});
+                bp.sync({request: bp.Event("SetEPSModeCritical")});
             }
         }
 
         if (ePSTelem.currentEPSMode == "Critical") {
             if (ePSTelem.vBatt > critical_Max) {
-                bp.sync({request: bp.Event("SetEPSMode-Low")});
+                bp.sync({request: bp.Event("SetEPSModeLow")});
             }
         }
     }
@@ -63,51 +64,51 @@ bp.registerBThread("ADCS Mode Switch logic", function () {
     /* Init Deployment*/
 
     var activePass = false;
-    bp.sync({request: bp.Event("SetADCSMode-Detumbling")});
+    bp.sync({request: bp.Event("SetADCSModeDetumbling")});
 
     /* ongoing */
     while (true) {
-        aDCSEvent = bp.sync({waitFor: [ADCSTelem, bp.Event("ActivePass"), bp.Event("PassDone")]});
-        bp.sync({request: bp.Event("SetEPSMode-Low")});
-        if (aDCSEvent.equals(bp.Event("ActivePayloadPass"))) {
+        var aDCSEvent = bp.sync({waitFor: [ADCSTelem, bp.Event("ActivePass"), bp.Event("PassDone")]});
+        
+        if (aDCSEvent.equals(bp.Event("ActivePass"))) {
             activePass = true;
-        } else if (aDCSEvent.equals(bp.Event("PayloadPassDone!"))) {
+        } else if (aDCSEvent.equals(bp.Event("PassDone"))) {
             activePass = false;
         } else {
             if (aDCSEvent.currentADCSMode == "Detumbling") {
-                if (aDCSEvent.lowAngularVel && activePass) {
-                    bp.sync({request: bp.Event("SetADCSMode-PayloadPointing")});
-                } else if (aDCSEvent.lowAngularVel) {
-                    bp.sync({request: bp.Event("SetADCSMode-SunPointing")});
+                if (aDCSEvent.angularRate == "Low" && activePass) {
+                    bp.sync({request: bp.Event("SetADCSModePayloadPointing")});
+                } else if (aDCSEvent.angularRate == "Low") {
+                    bp.sync({request: bp.Event("SetADCSModeSunPointing")});
                 }
             }
 
             if (aDCSEvent.currentADCSMode == "SunPointing") {
-                if (aDCSEvent.lowAngularVel && activePass) {
-                    bp.sync({request: bp.Event("SetADCSMode-PayloadPointing")});
-                } else if (aDCSEvent.highAngularVel) {
-                    bp.sync({request: bp.Event("SetADCSMode-Detumbling")});
+                if (aDCSEvent.angularRate == "Low" && activePass) {
+                    bp.sync({request: bp.Event("SetADCSModePayloadPointing")});
+                } else if (aDCSEvent.angularRate == "High") {
+                    bp.sync({request: bp.Event("SetADCSModeDetumbling")});
                 }
             }
 
             if (aDCSEvent.currentADCSMode == "PayloadPointing") {
-                if (aDCSEvent.lowAngularVel && !activePass) {
-                    bp.sync({request: bp.Event("SetADCSMode-SunPointing")});
-                } else if (aDCSEvent.highAngularVel) {
-                    bp.sync({request: bp.Event("SetADCSMode-Detumbling")});
+                if (aDCSEvent.angularRate == "Low" && !activePass) {
+                    bp.sync({request: bp.Event("SetADCSModeSunPointing")});
+                } else if (aDCSEvent.angularRate == "High") {
+                    bp.sync({request: bp.Event("SetADCSModeDetumbling")});
                 }
             }
         }
     }
 });
 
-bp.registerBThread("EPS & ADCS Integrator", function () {
-    var ePSTelem = bp.sync({waitFor: EPSTelem});
-    while (ePSTelem.currentEPSMode == "Low" || ePSTelem.currentEPSMode == "Critical") {
-        bp.sync({
-            waitFor: EPSTelem,
-              block: bp.Event("SetADCSMode-PayloadPointing")
-        });
-    }
-});
+//bp.registerBThread("EPS & ADCS Integrator", function () {
+//    var ePSTelem2 = bp.sync({waitFor: EPSTelem});
+//    while (ePSTelem2.currentEPSMode == "Low" || ePSTelem2.currentEPSMode == "Critical") {
+//        bp.sync({
+//            waitFor: EPSTelem,
+//            block: bp.Event("SetADCSModePayloadPointing")
+//        });
+//    }
+//});
 

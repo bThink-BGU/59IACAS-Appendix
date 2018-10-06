@@ -1,4 +1,4 @@
-package il.ac.bgu.cs.bp.iacas18;
+package il.ac.bgu.cs.bp.iacas18.events;
 
 import il.ac.bgu.cs.bp.bpjs.model.BEvent;
 import java.util.Objects;
@@ -12,17 +12,17 @@ public class ADCSTelemetry extends BEvent {
         Detumbling, PayloadPointing, SunPointing
     }
     
-    public enum AngularVelocity {
+    public enum AngularRate {
         High, Low
     }
     
     public final String currentADCSMode;
-    public final String angularVel;
+    public final String angularRate;
 
-    public ADCSTelemetry(String currentADCSMode, String angularVel) {
+    public ADCSTelemetry(ADCSMode currentADCSMode, AngularRate angularRate) {
         super("ADCSTelemetry");
-        this.currentADCSMode = currentADCSMode;
-        this.angularVel = angularVel;
+        this.currentADCSMode = currentADCSMode.name();
+        this.angularRate = angularRate.name();
     }
 
     @Override
@@ -47,12 +47,12 @@ public class ADCSTelemetry extends BEvent {
         if (!Objects.equals(this.currentADCSMode, other.currentADCSMode)) {
             return false;
         }
-        return Objects.equals(this.angularVel, other.angularVel);
+        return Objects.equals(this.angularRate, other.angularRate);
     }
 
     @Override
     public String toString() {
-        return "[ADCSTelemetry currentADCSMode:" + currentADCSMode + ", angularVel:" + angularVel + ']';
+        return "[ADCSTelemetry currentADCSMode:" + currentADCSMode + ", angularRate:" + angularRate + ']';
     }
     
     

@@ -1,4 +1,4 @@
-package il.ac.bgu.cs.bp.iacas18;
+package il.ac.bgu.cs.bp.iacas18.events;
 
 import il.ac.bgu.cs.bp.bpjs.model.BEvent;
 import java.util.Objects;
@@ -50,5 +50,7 @@ public class EPSTelemetry extends BEvent {
     public String toString() {
         return "[EPSTelemetry vBatt:" + vBatt + ", currentEPSMode:" + currentEPSMode + ']';
     }
+    
+    
     
 }
