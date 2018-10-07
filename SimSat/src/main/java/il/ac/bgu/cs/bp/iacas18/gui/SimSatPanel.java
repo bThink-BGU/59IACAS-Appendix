@@ -1,12 +1,18 @@
 package il.ac.bgu.cs.bp.iacas18.gui;
 
+import il.ac.bgu.cs.bp.bpjs.model.BEvent;
 import il.ac.bgu.cs.bp.iacas18.events.EPSTelemetry;
 import il.ac.bgu.cs.bp.iacas18.events.ADCSTelemetry;
+import il.ac.bgu.cs.bp.iacas18.events.StaticEvent;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
-import java.awt.TextArea;
+import java.util.HashMap;
+import java.util.Map;
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -15,6 +21,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
+import javax.swing.ListCellRenderer;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 import javax.swing.border.Border;
@@ -40,8 +47,8 @@ public class SimSatPanel extends JPanel {
     public EnumStatusDisplay<MainWindowCtrl.SimulationStatus> stsSimulationStatus;
 
     public JComboBox<ADCSTelemetry.AngularRate> cmbAngularRate;
-    public TextArea ThelogText;
     JList logList;
+    public final DefaultListModel<BEvent> eventlog = new DefaultListModel<>();
 
     public SimSatPanel() {
         btnStartStop = new JButton("Start");
@@ -55,8 +62,8 @@ public class SimSatPanel extends JPanel {
         stsAdcsMode = new EnumStatusDisplay(ADCSTelemetry.ADCSMode.class);
         stsAngularRate = new EnumStatusDisplay(ADCSTelemetry.AngularRate.class);
         stsSimulationStatus = new EnumStatusDisplay<>(MainWindowCtrl.SimulationStatus.class);
-        logList = new JList();
-        ThelogText = new TextArea();
+        logList = new JList(eventlog);
+        logList.setCellRenderer(new EventRenderer());
 
         JComponent controls = PanelMatic.begin()
                 .addHeader(HeaderLevel.H3, "Control")
@@ -78,7 +85,7 @@ public class SimSatPanel extends JPanel {
 
         JComponent logPanel = PanelMatic.begin()
                 .addHeader(HeaderLevel.H3, "Event Log")
-                .add(new JScrollPane(ThelogText, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER),
+                .add(new JScrollPane(logList, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER),
                         Modifiers.GROW)
                 .get();
 
@@ -94,6 +101,12 @@ public class SimSatPanel extends JPanel {
         setLayout(new BorderLayout());
         add(top, BorderLayout.CENTER);
     }
+    
+    public void addToLog( BEvent be ) {
+        eventlog.addElement(be);
+        int size = eventlog.getSize();
+        logList.scrollRectToVisible(logList.getCellBounds(size-1, size));
+    }
 
     private JLabel dataLabel(JLabel in) {
         in.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 14));
@@ -105,4 +118,46 @@ public class SimSatPanel extends JPanel {
         return in;
     }
 
+}
+
+
+class EventRenderer implements ListCellRenderer<BEvent> {
+    
+    JPanel pnl = new JPanel();
+    JLabel eventNameLbl = new JLabel();
+    JLabel eventDataLbl = new JLabel();
+    Map<Class,Color> colors = new HashMap<>();
+    Color defaultColor = new Color(240,226,226);
+    
+    public EventRenderer() {
+        Font fnt = new Font(Font.MONOSPACED, Font.PLAIN, 12);
+        eventNameLbl.setFont( fnt );
+        eventDataLbl.setFont( fnt );
+        eventNameLbl.setPreferredSize(new Dimension(100, 20));
+        pnl.setLayout( new BorderLayout() );
+        pnl.add( eventNameLbl, BorderLayout.WEST );
+        pnl.add( eventDataLbl, BorderLayout.CENTER );
+        pnl.setBorder( new EmptyBorder(2,4,2,4) );
+        colors.put(ADCSTelemetry.class, new Color(242,220,222));
+        colors.put(EPSTelemetry.class, new Color(237,198,193));
+        colors.put(StaticEvent.class, new Color(221,242,220));
+    }
+    
+    @Override
+    public Component getListCellRendererComponent(JList list, BEvent value, int index, boolean isSelected, boolean cellHasFocus) {
+        pnl.setBackground( isSelected ? list.getSelectionBackground() : colors.getOrDefault(value.getClass(), defaultColor) );
+        eventNameLbl.setForeground( isSelected ? list.getSelectionForeground() : Color.black );
+        eventDataLbl.setForeground( isSelected ? list.getSelectionForeground() : Color.gray );
+        String eventString = value.toString();
+        if ( eventString.startsWith("[") && eventString.endsWith("]")) {
+            eventString = eventString.substring(1, eventString.length()-1);
+        }
+        String[] comps = eventString.split(" ", 2);
+       
+        eventNameLbl.setText(comps[0]);
+        eventDataLbl.setText(comps[1]);
+        pnl.setPreferredSize( new Dimension(list.getWidth(), 25));
+        return pnl;
+    }
+    
 }

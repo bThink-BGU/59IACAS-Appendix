@@ -40,7 +40,6 @@ public class MainWindowCtrl {
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
         pnl.btnPassEnd.setEnabled(false);
-        pnl.ThelogText.setFont(pnl.ThelogText.getFont().deriveFont(((pnl.ThelogText.getFont().getSize() + 2.0f))));
         angularRate = ADCSTelemetry.AngularRate.High;
         pnl.stsAngularRate.setValue(ADCSTelemetry.AngularRate.High);
         pnl.btnAngRateHigh.setEnabled(false);
