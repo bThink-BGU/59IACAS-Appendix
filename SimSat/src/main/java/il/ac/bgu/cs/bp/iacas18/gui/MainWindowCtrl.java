@@ -1,6 +1,14 @@
 package il.ac.bgu.cs.bp.iacas18.gui;
 
+import il.ac.bgu.cs.bp.bpjs.model.BEvent;
 import il.ac.bgu.cs.bp.iacas18.events.*;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 
 /**
@@ -23,6 +31,7 @@ public class MainWindowCtrl {
     private boolean inPass = false;
     public JFrame frame;
     public SimSatPanel pnl;
+    File previousDir = null;
 
     public MainWindowCtrl() {
         EpsMode = EPSTelemetry.EPSMode.Critical;
@@ -53,7 +62,38 @@ public class MainWindowCtrl {
         pnl.btnAngRateLow.addActionListener(e -> {
             angularRate = ADCSTelemetry.AngularRate.Low;
         });
-
+        pnl.btnSaveLog.addActionListener( e->saveEventLog() );
+        
+    }
+    
+    private boolean saveEventLog() {
+       
+        JFileChooser csr = new JFileChooser();
+        if ( previousDir != null ) {
+            csr.setCurrentDirectory(previousDir);
+        }
+        csr.showSaveDialog(null);
+        if ( csr.getSelectedFile() != null ) {
+            System.out.println(csr.getSelectedFile());
+            previousDir = csr.getCurrentDirectory();
+            final List<String> toWrite = new ArrayList<>(pnl.eventlog.size());
+            Enumeration<BEvent> evts = pnl.eventlog.elements();
+            
+            while ( evts.hasMoreElements() ) {
+                BEvent evt = evts.nextElement();
+                toWrite.add( evt.toString() );
+            }
+            
+            new Thread( ()->{
+                try {
+                    Files.write(csr.getSelectedFile().toPath(), toWrite);
+                } catch (IOException iox) {
+                    iox.printStackTrace(System.out);
+                        
+                }
+            }).start();
+        }
+        return true;
     }
 
 }

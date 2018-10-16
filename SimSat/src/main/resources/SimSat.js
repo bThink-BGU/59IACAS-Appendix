@@ -23,36 +23,36 @@ var activePass = false;
 bp.registerBThread("EPS - Turn ON/OFF logic", function () {
 
     /* Init */
-    var ePSTelem = bp.sync({waitFor: [EPSTelem]});
+    var ePSTelem = bp.sync({waitFor: EPSTelem});
     if (ePSTelem.vBatt >= good_Min) {
-        bp.sync({waitFor: [EPSTelem], 
+        bp.sync({waitFor: EPSTelem, 
             request: bp.Event("SetEPSModeGood")});
     } else if (ePSTelem.vBatt >= low_Min) {
-        bp.sync({waitFor: [EPSTelem], 
+        bp.sync({waitFor: EPSTelem, 
             request: bp.Event("SetEPSModeLow")});
     } else {
-        bp.sync({waitFor: [EPSTelem], 
+        bp.sync({waitFor: EPSTelem, 
             request: bp.Event("SetEPSModeCritical")});
     }
 
     /* ongoing */
     while (true) {
-        ePSTelem = bp.sync({waitFor: [EPSTelem]});
+        ePSTelem = bp.sync({waitFor: EPSTelem});
 
         if (ePSTelem.currentEPSMode == "Good") {
             if (ePSTelem.vBatt < good_Min) {
-                bp.sync({waitFor: [EPSTelem], 
+                bp.sync({waitFor: EPSTelem, 
                     request: bp.Event("SetEPSModeLow")});
             }
         }
 
         if (ePSTelem.currentEPSMode == "Low") {
             if (ePSTelem.vBatt > low_Max) {
-                bp.sync({waitFor: [EPSTelem], 
+                bp.sync({waitFor: EPSTelem, 
                     request: bp.Event("SetEPSModeGood")});
             }
             if (ePSTelem.vBatt < low_Min) {
-                bp.sync({waitFor: [EPSTelem], 
+                bp.sync({waitFor: EPSTelem, 
                     request: bp.Event("SetEPSModeCritical")});
             }
         }

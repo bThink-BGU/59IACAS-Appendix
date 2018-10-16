@@ -56,6 +56,7 @@ public class SimSatPanel extends JPanel {
         btnPassEnd = new JButton("End");
         btnAngRateHigh = new JButton("Set to High");
         btnAngRateLow = new JButton("Set to Low");
+        btnSaveLog = new JButton("Save...");
         lblTime = new JLabel("0");
         lblVBatt = new JLabel("-");
         stsEpsMode = new EnumStatusDisplay(EPSTelemetry.EPSMode.class);
@@ -84,7 +85,7 @@ public class SimSatPanel extends JPanel {
                 .get();
 
         JComponent logPanel = PanelMatic.begin()
-                .addHeader(HeaderLevel.H3, "Event Log")
+                .addHeader(HeaderLevel.H3, "Event Log", btnSaveLog)
                 .add(new JScrollPane(logList, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER),
                         Modifiers.GROW)
                 .get();
@@ -97,9 +98,13 @@ public class SimSatPanel extends JPanel {
 //        JSplitPane top = new JSplitPane();
         top.add(controls);
         top.add(logPanel);
-
+        
         setLayout(new BorderLayout());
-        add(top, BorderLayout.CENTER);
+        add(PanelMatic.begin()
+            .addHeader(HeaderLevel.H1, "Satellite Simulator, BP Group@BGU")
+            .add( new JSeparator() )
+            .add( top, Modifiers.GROW )
+            .get(), BorderLayout.CENTER);
     }
     
     public void addToLog( BEvent be ) {
