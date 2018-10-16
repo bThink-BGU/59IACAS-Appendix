@@ -28,7 +28,7 @@ public class SimSat {
     private static final int TELEMETRY_INTERVAL = 100; // msec
     private static final int CLOCK_INTERVAL = 50; // msec
     
-    static MainWindowCtrl guir;
+    static MainWindowCtrl windowCtrl;
     static BProgramRunner rnr;
     static Timer externalEventsTimer;
     static SingleResourceBProgram bprog;
@@ -42,14 +42,14 @@ public class SimSat {
     
     private static void setupUI() {
         
-        guir = new MainWindowCtrl();
+        windowCtrl = new MainWindowCtrl();
         
-        guir.pnl.btnStartStop.addActionListener(e -> {
-            switch (guir.simStatus) {
+        windowCtrl.pnl.btnStartStop.addActionListener(e -> {
+            switch (windowCtrl.simStatus) {
                 case Off:
-                    guir.pnl.btnStartStop.setText("Stop");
-                    guir.pnl.eventlog.clear();
-                    guir.simStatus = MainWindowCtrl.SimulationStatus.Running;
+                    windowCtrl.pnl.btnStartStop.setText("Stop");
+                    windowCtrl.pnl.eventlog.clear();
+                    windowCtrl.simStatus = MainWindowCtrl.SimulationStatus.Running;
                     bprog = new SingleResourceBProgram("SimSat.js");
                     bprog.setDaemonMode(true);
                     isGo.set(true);
@@ -62,6 +62,10 @@ public class SimSat {
 //                    // Start the simulation
 //
 //                    // TODO kick the simulation off
+//                    break;//                case Error:
+//                    // Start the simulation
+//
+//                    // TODO kick the simulation off
 //                    break;
 
                 case Running:
@@ -69,8 +73,8 @@ public class SimSat {
                         isGo.set(false);
                         externalEventsTimer.cancel();
                     }
-                    guir.pnl.btnStartStop.setText("Start");
-                    guir.simStatus = MainWindowCtrl.SimulationStatus.Off;
+                    windowCtrl.pnl.btnStartStop.setText("Start");
+                    windowCtrl.simStatus = MainWindowCtrl.SimulationStatus.Off;
                     rnr = null;
                     break;
 
@@ -79,38 +83,38 @@ public class SimSat {
 //
 //                    break;
             }
-            guir.pnl.stsSimulationStatus.setValue(guir.simStatus);
+            windowCtrl.pnl.stsSimulationStatus.setValue(windowCtrl.simStatus);
         });
 
-        guir.pnl.btnPassStart.addActionListener(e -> {
+        windowCtrl.pnl.btnPassStart.addActionListener(e -> {
             bprog.enqueueExternalEvent(StaticEvent.ActivePass);
-            guir.pnl.btnPassStart.setEnabled(false);
-            guir.pnl.btnPassEnd.setEnabled(true);
+            windowCtrl.pnl.btnPassStart.setEnabled(false);
+            windowCtrl.pnl.btnPassEnd.setEnabled(true);
         });
 
-        guir.pnl.btnPassEnd.addActionListener(e -> {
+        windowCtrl.pnl.btnPassEnd.addActionListener(e -> {
             if (rnr != null) {
                 rnr.getBProgram().enqueueExternalEvent(StaticEvent.PassDone);
-                guir.pnl.btnPassStart.setEnabled(true);
-                guir.pnl.btnPassEnd.setEnabled(false);
+                windowCtrl.pnl.btnPassStart.setEnabled(true);
+                windowCtrl.pnl.btnPassEnd.setEnabled(false);
             }
         });
         
-        guir.pnl.btnAngRateHigh.addActionListener(e -> {
-               guir.pnl.stsAngularRate.setValue(ADCSTelemetry.AngularRate.High);
+        windowCtrl.pnl.btnAngRateHigh.addActionListener(e -> {
+               windowCtrl.pnl.stsAngularRate.setValue(ADCSTelemetry.AngularRate.High);
                System.out.println("ADCS at High Angular Rate");
-               guir.angularRate = ADCSTelemetry.AngularRate.High;
-               guir.pnl.btnAngRateHigh.setEnabled(false);
-               guir.pnl.btnAngRateLow.setEnabled(true);
+               windowCtrl.angularRate = ADCSTelemetry.AngularRate.High;
+               windowCtrl.pnl.btnAngRateHigh.setEnabled(false);
+               windowCtrl.pnl.btnAngRateLow.setEnabled(true);
                
         });
         
-        guir.pnl.btnAngRateLow.addActionListener(e -> {
-               guir.pnl.stsAngularRate.setValue(ADCSTelemetry.AngularRate.Low);
+        windowCtrl.pnl.btnAngRateLow.addActionListener(e -> {
+               windowCtrl.pnl.stsAngularRate.setValue(ADCSTelemetry.AngularRate.Low);
                System.out.println("ADCS at Low Angular Rate");
-               guir.angularRate = ADCSTelemetry.AngularRate.Low;
-               guir.pnl.btnAngRateHigh.setEnabled(true);
-               guir.pnl.btnAngRateLow.setEnabled(false);
+               windowCtrl.angularRate = ADCSTelemetry.AngularRate.Low;
+               windowCtrl.pnl.btnAngRateHigh.setEnabled(true);
+               windowCtrl.pnl.btnAngRateLow.setEnabled(false);
         });
     }
     
@@ -124,57 +128,57 @@ public class SimSat {
 
             @Override
             public void eventSelected(BProgram bp, BEvent theEvent) {
-                invokeLater(()->guir.pnl.addToLog(theEvent));
+                invokeLater(()->windowCtrl.pnl.addToLog(theEvent));
                 
                 if ( ! isGo.get() ) throw new StopException();
                 
                 if (theEvent.equals(StaticEvent.SetEPSModeCritical)) {
                     System.out.println("EPS Set To Critical");
-                    invokeLater( ()->{
-                        guir.EpsMode = EPSTelemetry.EPSMode.Critical;
-                        guir.pnl.stsEpsMode.setValue(EPSTelemetry.EPSMode.Critical);
+                    invokeLater(()->{
+                        windowCtrl.EpsMode = EPSTelemetry.EPSMode.Critical;
+                        windowCtrl.pnl.stsEpsMode.setValue(EPSTelemetry.EPSMode.Critical);
                     });
                 }
                 if (theEvent.equals(StaticEvent.SetEPSModeLow)) {
                     System.out.println("EPS Set To Low");
-                    invokeLater( ()->{
-                        guir.EpsMode = EPSTelemetry.EPSMode.Low;
-                        guir.pnl.stsEpsMode.setValue(EPSTelemetry.EPSMode.Low);
+                    invokeLater(()->{
+                        windowCtrl.EpsMode = EPSTelemetry.EPSMode.Low;
+                        windowCtrl.pnl.stsEpsMode.setValue(EPSTelemetry.EPSMode.Low);
                     });
                 }
                 if (theEvent.equals(StaticEvent.SetEPSModeGood)) {
                     System.out.println("EPS Set To Good");
-                    invokeLater( ()->{
-                        guir.EpsMode = EPSTelemetry.EPSMode.Good;
-                        guir.pnl.stsEpsMode.setValue(EPSTelemetry.EPSMode.Good);
+                    invokeLater(()->{
+                        windowCtrl.EpsMode = EPSTelemetry.EPSMode.Good;
+                        windowCtrl.pnl.stsEpsMode.setValue(EPSTelemetry.EPSMode.Good);
                     });
                 }
                 if (theEvent.equals(StaticEvent.SetADCSModeDetumbling)) {
                     System.out.println("ADCS Set To Detumbling");
-                    invokeLater( ()->{
-                        guir.AdcSMode = ADCSTelemetry.ADCSMode.Detumbling;
-                        guir.pnl.stsAdcsMode.setValue(ADCSTelemetry.ADCSMode.Detumbling);
+                    invokeLater(()->{
+                        windowCtrl.AdcSMode = ADCSTelemetry.ADCSMode.Detumbling;
+                        windowCtrl.pnl.stsAdcsMode.setValue(ADCSTelemetry.ADCSMode.Detumbling);
                     });
                 }
                 if (theEvent.equals(StaticEvent.SetADCSModeSunPointing)) {
                     System.out.println("ADCS Set To SunPointing");
-                    invokeLater( ()->{
-                        guir.AdcSMode = ADCSTelemetry.ADCSMode.SunPointing;
-                        guir.pnl.stsAdcsMode.setValue(ADCSTelemetry.ADCSMode.SunPointing);
+                    invokeLater(()->{
+                        windowCtrl.AdcSMode = ADCSTelemetry.ADCSMode.SunPointing;
+                        windowCtrl.pnl.stsAdcsMode.setValue(ADCSTelemetry.ADCSMode.SunPointing);
                     });
                 }
                 if (theEvent.equals(StaticEvent.SetADCSModePayloadPointing)) {
                     System.out.println("ADCS Set To PayloadPointing");
-                    invokeLater( ()->{
-                        guir.AdcSMode = ADCSTelemetry.ADCSMode.PayloadPointing;
-                        guir.pnl.stsAdcsMode.setValue(ADCSTelemetry.ADCSMode.PayloadPointing);
+                    invokeLater(()->{
+                        windowCtrl.AdcSMode = ADCSTelemetry.ADCSMode.PayloadPointing;
+                        windowCtrl.pnl.stsAdcsMode.setValue(ADCSTelemetry.ADCSMode.PayloadPointing);
                     });
                 }
                 if (theEvent.equals(StaticEvent.PassDone)) {
                     System.out.println("PassDone requested");
-                    invokeLater( ()->{
-                        guir.pnl.btnPassStart.setEnabled(true);
-                        guir.pnl.btnPassEnd.setEnabled(false);
+                    invokeLater(()->{
+                        windowCtrl.pnl.btnPassStart.setEnabled(true);
+                        windowCtrl.pnl.btnPassEnd.setEnabled(false);
                     });
                 }
             }
@@ -186,14 +190,20 @@ public class SimSat {
         
         TimerTask pushTelemetries = new TimerTask(){
             long j = 0;
-            int v = 50;
             @Override
             public void run() {
-                    v = (int) (30 + Math.round(50 * Math.abs(Math.sin(Math.PI * j / 360))));
-                    invokeLater(()->guir.pnl.lblVBatt.setText(Integer.toString(v)));
-                    j++;
-                    bprog.enqueueExternalEvent(new EPSTelemetry(v, guir.EpsMode));
-                    bprog.enqueueExternalEvent(new ADCSTelemetry(guir.AdcSMode, guir.angularRate));
+                int v = windowCtrl.batteryLevelInput.get();
+                if ( windowCtrl.autoBatteryLevel.get() ) {
+                    v = 30 + (int) (Math.round(50 * Math.abs(Math.sin(Math.PI * j / 360))));
+                }
+                final int updatedBatteryLevel = v;
+                invokeLater(()->{
+                    windowCtrl.pnl.setBatteryLevel(updatedBatteryLevel);
+                    windowCtrl.pnl.lblVBatt.setText(Integer.toString(updatedBatteryLevel));
+                 });
+                j++;
+                bprog.enqueueExternalEvent(new EPSTelemetry(v, windowCtrl.EpsMode));
+                bprog.enqueueExternalEvent(new ADCSTelemetry(windowCtrl.AdcSMode, windowCtrl.angularRate));
             }
         };
         
@@ -204,7 +214,7 @@ public class SimSat {
             
             @Override
             public void run() {
-                invokeLater(()->guir.pnl.lblTime.setText(Integer.toString(clockTick)));
+                invokeLater(()->windowCtrl.pnl.lblTime.setText(Integer.toString(clockTick)));
                 clockTick++;
             }
         };

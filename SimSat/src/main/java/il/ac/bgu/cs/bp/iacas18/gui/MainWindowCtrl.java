@@ -8,6 +8,8 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 
@@ -31,6 +33,8 @@ public class MainWindowCtrl {
     private boolean inPass = false;
     public JFrame frame;
     public SimSatPanel pnl;
+    public final AtomicInteger batteryLevelInput = new AtomicInteger();
+    public final AtomicBoolean autoBatteryLevel = new AtomicBoolean(true);
     File previousDir = null;
 
     public MainWindowCtrl() {
@@ -63,6 +67,12 @@ public class MainWindowCtrl {
             angularRate = ADCSTelemetry.AngularRate.Low;
         });
         pnl.btnSaveLog.addActionListener( e->saveEventLog() );
+        pnl.sldBatteryLevel.addChangeListener(e->{
+            batteryLevelInput.set(pnl.getBatteryLevel());
+        });
+        pnl.chkAutoBatteryLevel.addChangeListener(e->{
+            autoBatteryLevel.set(pnl.chkAutoBatteryLevel.isSelected());
+        });
         
     }
     
