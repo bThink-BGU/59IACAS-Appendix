@@ -8,12 +8,12 @@ import il.ac.bgu.cs.bp.bpjs.model.BProgram;
 import il.ac.bgu.cs.bp.bpjs.model.SingleResourceBProgram;
 import il.ac.bgu.cs.bp.iacas18.events.ADCSTelemetry;
 import il.ac.bgu.cs.bp.iacas18.events.EPSTelemetry;
+import il.ac.bgu.cs.bp.iacas18.events.LocationTelemetry;
 import il.ac.bgu.cs.bp.iacas18.events.StaticEvent;
 import il.ac.bgu.cs.bp.iacas18.gui.MainWindowCtrl;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.atomic.AtomicBoolean;
 import static javax.swing.SwingUtilities.invokeAndWait;
 import static javax.swing.SwingUtilities.invokeLater;
 
@@ -32,13 +32,10 @@ public class SimSat {
     static BProgramRunner rnr;
     static Timer externalEventsTimer;
     static SingleResourceBProgram bprog;
-    static final AtomicBoolean isGo = new AtomicBoolean(true);
     
     public static void main(String[] args) throws InterruptedException, InvocationTargetException {
         invokeAndWait(()->setupUI());
     }
-    
-    private static class StopException extends RuntimeException {}
     
     private static void setupUI() {
         
@@ -51,26 +48,16 @@ public class SimSat {
                     windowCtrl.pnl.eventlog.clear();
                     windowCtrl.simStatus = MainWindowCtrl.SimulationStatus.Running;
                     bprog = new SingleResourceBProgram("SimSat.js");
-                    bprog.setDaemonMode(true);
-                    isGo.set(true);
+                    bprog.setWaitForExternalEvents(true);
                     rnr = new BProgramRunner(bprog);
                     addRnrListeners();
                     new Thread(()->rnr.run()).start();
                     startExternalEvents();
                     break;
-//                case Error:
-//                    // Start the simulation
-//
-//                    // TODO kick the simulation off
-//                    break;//                case Error:
-//                    // Start the simulation
-//
-//                    // TODO kick the simulation off
-//                    break;
 
                 case Running:
                     if (rnr != null) {
-                        isGo.set(false);
+                        rnr.halt();
                         externalEventsTimer.cancel();
                     }
                     windowCtrl.pnl.btnStartStop.setText("Start");
@@ -78,28 +65,10 @@ public class SimSat {
                     rnr = null;
                     break;
 
-//                case Starting:
-//                    guir.simStatus = MainWindowCtrl.SimulationStatus.Running;
-//
-//                    break;
             }
             windowCtrl.pnl.stsSimulationStatus.setValue(windowCtrl.simStatus);
         });
 
-        windowCtrl.pnl.btnPassStart.addActionListener(e -> {
-            bprog.enqueueExternalEvent(StaticEvent.ActivePass);
-            windowCtrl.pnl.btnPassStart.setEnabled(false);
-            windowCtrl.pnl.btnPassEnd.setEnabled(true);
-        });
-
-        windowCtrl.pnl.btnPassEnd.addActionListener(e -> {
-            if (rnr != null) {
-                rnr.getBProgram().enqueueExternalEvent(StaticEvent.PassDone);
-                windowCtrl.pnl.btnPassStart.setEnabled(true);
-                windowCtrl.pnl.btnPassEnd.setEnabled(false);
-            }
-        });
-        
         windowCtrl.pnl.btnAngRateHigh.addActionListener(e -> {
                windowCtrl.pnl.stsAngularRate.setValue(ADCSTelemetry.AngularRate.High);
                System.out.println("ADCS at High Angular Rate");
@@ -129,8 +98,6 @@ public class SimSat {
             @Override
             public void eventSelected(BProgram bp, BEvent theEvent) {
                 invokeLater(()->windowCtrl.pnl.addToLog(theEvent));
-                
-                if ( ! isGo.get() ) throw new StopException();
                 
                 if (theEvent.equals(StaticEvent.SetEPSModeCritical)) {
                     System.out.println("EPS Set To Critical");
@@ -204,6 +171,7 @@ public class SimSat {
                 j++;
                 bprog.enqueueExternalEvent(new EPSTelemetry(v, windowCtrl.EpsMode));
                 bprog.enqueueExternalEvent(new ADCSTelemetry(windowCtrl.AdcSMode, windowCtrl.angularRate));
+                bprog.enqueueExternalEvent( new LocationTelemetry(windowCtrl.overTarget.get()));
             }
         };
         

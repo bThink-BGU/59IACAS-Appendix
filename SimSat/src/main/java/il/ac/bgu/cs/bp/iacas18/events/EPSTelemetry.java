@@ -1,12 +1,11 @@
 package il.ac.bgu.cs.bp.iacas18.events;
 
-import il.ac.bgu.cs.bp.bpjs.model.BEvent;
 import java.util.Objects;
 
 /**
  * Telemetry event for the Electronic Power Supply system.
  */
-public class EPSTelemetry extends BEvent {
+public class EPSTelemetry extends Telemetry implements java.io.Serializable {
     
     public enum EPSMode {
         Good, Low, Critical

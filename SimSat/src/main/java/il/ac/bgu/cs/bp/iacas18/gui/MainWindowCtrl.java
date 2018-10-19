@@ -35,6 +35,8 @@ public class MainWindowCtrl {
     public SimSatPanel pnl;
     public final AtomicInteger batteryLevelInput = new AtomicInteger();
     public final AtomicBoolean autoBatteryLevel = new AtomicBoolean(true);
+    public final AtomicBoolean overTarget = new AtomicBoolean(false);
+    
     File previousDir = null;
 
     public MainWindowCtrl() {
@@ -72,6 +74,18 @@ public class MainWindowCtrl {
         });
         pnl.chkAutoBatteryLevel.addChangeListener(e->{
             autoBatteryLevel.set(pnl.chkAutoBatteryLevel.isSelected());
+        });
+        
+        pnl.btnPassStart.addActionListener(e -> {
+            pnl.btnPassStart.setEnabled(false);
+            pnl.btnPassEnd.setEnabled(true);
+            overTarget.set(true);
+        });
+
+        pnl.btnPassEnd.addActionListener(e -> {
+            pnl.btnPassStart.setEnabled(true);
+            pnl.btnPassEnd.setEnabled(false);
+            overTarget.set(false);
         });
         
     }
