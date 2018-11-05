@@ -54,6 +54,7 @@ public class SimSatPanel extends JPanel {
     public JComboBox<ADCSTelemetry.AngularRate> cmbAngularRate;
     JList logList;
     public final DefaultListModel<BEvent> eventlog = new DefaultListModel<>();
+    public ProjectPanel projectPanel;
 
     public SimSatPanel() {
         
@@ -87,6 +88,7 @@ public class SimSatPanel extends JPanel {
         logList = new JList(eventlog);
         logList.setCellRenderer(new EventRenderer());
        
+        projectPanel = new ProjectPanel();
 
         JComponent controls = PanelMatic.begin()
                 .addHeader(HeaderLevel.H3, "Control")
@@ -117,7 +119,8 @@ public class SimSatPanel extends JPanel {
         Border margins = new EmptyBorder(2, 5, 2, 5);
         controls.setBorder(margins);
         logPanel.setBorder(margins);
-        top.setLayout(new GridLayout(1, 2));
+        top.setLayout(new GridLayout(1, 3));
+        top.add(projectPanel);
         top.add(controls);
         top.add(logPanel);
         

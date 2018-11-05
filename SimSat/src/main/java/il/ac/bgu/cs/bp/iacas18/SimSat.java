@@ -11,6 +11,7 @@ import il.ac.bgu.cs.bp.iacas18.events.EPSTelemetry;
 import il.ac.bgu.cs.bp.iacas18.events.LocationTelemetry;
 import il.ac.bgu.cs.bp.iacas18.events.StaticEvent;
 import il.ac.bgu.cs.bp.iacas18.gui.MainWindowCtrl;
+import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -85,6 +86,9 @@ public class SimSat {
                windowCtrl.pnl.btnAngRateHigh.setEnabled(true);
                windowCtrl.pnl.btnAngRateLow.setEnabled(false);
         });
+        
+        windowCtrl.pnl.projectPanel.setDirectory(new File(".").getAbsoluteFile().toPath());
+        windowCtrl.pnl.projectPanel.reload();
     }
     
     /**
