@@ -11,7 +11,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import org.omg.CORBA.CurrentHolder;
 
 /**
  * A panel with the UI for selecting files to be run

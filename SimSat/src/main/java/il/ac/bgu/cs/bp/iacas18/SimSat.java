@@ -5,7 +5,7 @@ import il.ac.bgu.cs.bp.bpjs.execution.listeners.BProgramRunnerListenerAdapter;
 import il.ac.bgu.cs.bp.bpjs.execution.listeners.PrintBProgramRunnerListener;
 import il.ac.bgu.cs.bp.bpjs.model.BEvent;
 import il.ac.bgu.cs.bp.bpjs.model.BProgram;
-import il.ac.bgu.cs.bp.bpjs.model.SingleResourceBProgram;
+import il.ac.bgu.cs.bp.bpjs.model.ResourceBProgram;
 import il.ac.bgu.cs.bp.iacas18.events.ADCSTelemetry;
 import il.ac.bgu.cs.bp.iacas18.events.EPSTelemetry;
 import il.ac.bgu.cs.bp.iacas18.events.LocationTelemetry;
@@ -32,7 +32,7 @@ public class SimSat {
     static MainWindowCtrl windowCtrl;
     static BProgramRunner rnr;
     static Timer externalEventsTimer;
-    static SingleResourceBProgram bprog;
+    static ResourceBProgram bprog;
     
     public static void main(String[] args) throws InterruptedException, InvocationTargetException {
         invokeAndWait(()->setupUI());
@@ -48,7 +48,7 @@ public class SimSat {
                     windowCtrl.pnl.btnStartStop.setText("Stop");
                     windowCtrl.pnl.eventlog.clear();
                     windowCtrl.simStatus = MainWindowCtrl.SimulationStatus.Running;
-                    bprog = new SingleResourceBProgram("SimSat.js");
+                    bprog = new ResourceBProgram("SimSat.js");
                     bprog.setWaitForExternalEvents(true);
                     rnr = new BProgramRunner(bprog);
                     addRnrListeners();
