@@ -1,12 +1,11 @@
 package il.ac.bgu.cs.bp.iacas18.events;
 
-import il.ac.bgu.cs.bp.bpjs.model.BEvent;
 import java.util.Objects;
 
 /**
  * Telemetry event for the ADCS system.
  */
-public class ADCSTelemetry extends BEvent {
+public class ADCSTelemetry extends AbstractTelemetry {
     
     public enum ADCSMode {
         Detumbling, PayloadPointing, SunPointing
@@ -18,17 +17,21 @@ public class ADCSTelemetry extends BEvent {
     
     public final String currentADCSMode;
     public final String angularRate;
+    public final ADCSMode mode;
 
-    public ADCSTelemetry(ADCSMode currentADCSMode, AngularRate angularRate) {
-        super("ADCSTelemetry");
+    public ADCSTelemetry(ADCSMode currentADCSMode, AngularRate angularRate, boolean isActivePass) {
+        super("ADCSTelemetry", isActivePass);
         this.currentADCSMode = currentADCSMode.name();
         this.angularRate = angularRate.name();
+        this.mode = currentADCSMode;
     }
 
     @Override
     public int hashCode() {
         int hash = 7;
         hash = 29 * hash + Objects.hashCode(this.currentADCSMode);
+        hash = 29 * hash + Objects.hashCode(this.angularRate);
+        hash = 29 * hash + Objects.hashCode(this.isActivePass);
         return hash;
     }
 
@@ -47,7 +50,8 @@ public class ADCSTelemetry extends BEvent {
         if (!Objects.equals(this.currentADCSMode, other.currentADCSMode)) {
             return false;
         }
-        return Objects.equals(this.angularRate, other.angularRate);
+        return Objects.equals(this.angularRate, other.angularRate) 
+            && equalsAsTelemetry(other);
     }
 
     @Override

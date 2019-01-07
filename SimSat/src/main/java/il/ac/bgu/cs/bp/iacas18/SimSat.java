@@ -5,7 +5,7 @@ import il.ac.bgu.cs.bp.bpjs.execution.listeners.BProgramRunnerListenerAdapter;
 import il.ac.bgu.cs.bp.bpjs.execution.listeners.PrintBProgramRunnerListener;
 import il.ac.bgu.cs.bp.bpjs.model.BEvent;
 import il.ac.bgu.cs.bp.bpjs.model.BProgram;
-import il.ac.bgu.cs.bp.bpjs.model.SingleResourceBProgram;
+import il.ac.bgu.cs.bp.bpjs.model.ResourceBProgram;
 import il.ac.bgu.cs.bp.iacas18.events.ADCSTelemetry;
 import il.ac.bgu.cs.bp.iacas18.events.EPSTelemetry;
 import il.ac.bgu.cs.bp.iacas18.events.StaticEvent;
@@ -31,8 +31,9 @@ public class SimSat {
     static MainWindowCtrl guir;
     static BProgramRunner rnr;
     static Timer externalEventsTimer;
-    static SingleResourceBProgram bprog;
+    static ResourceBProgram bprog;
     static final AtomicBoolean isGo = new AtomicBoolean(true);
+    static final AtomicBoolean isActivePass = new AtomicBoolean(false);
     
     public static void main(String[] args) throws InterruptedException, InvocationTargetException {
         invokeAndWait(()->setupUI());
@@ -50,8 +51,8 @@ public class SimSat {
                     guir.pnl.btnStartStop.setText("Stop");
                     guir.pnl.eventlog.clear();
                     guir.simStatus = MainWindowCtrl.SimulationStatus.Running;
-                    bprog = new SingleResourceBProgram("SimSat.js");
-                    bprog.setDaemonMode(true);
+                    bprog = new ResourceBProgram("SimSat.js");
+                    bprog.setWaitForExternalEvents(true);
                     isGo.set(true);
                     rnr = new BProgramRunner(bprog);
                     addRnrListeners();
@@ -172,10 +173,14 @@ public class SimSat {
                 }
                 if (theEvent.equals(StaticEvent.PassDone)) {
                     System.out.println("PassDone requested");
+                    isActivePass.set(false);
                     invokeLater( ()->{
                         guir.pnl.btnPassStart.setEnabled(true);
                         guir.pnl.btnPassEnd.setEnabled(false);
                     });
+                }
+                if ( theEvent.equals(StaticEvent.ActivePass) ) {
+                    isActivePass.set(true);
                 }
             }
         });
@@ -192,8 +197,8 @@ public class SimSat {
                     v = (int) (30 + Math.round(50 * Math.abs(Math.sin(Math.PI * j / 360))));
                     invokeLater(()->guir.pnl.lblVBatt.setText(Integer.toString(v)));
                     j++;
-                    bprog.enqueueExternalEvent(new EPSTelemetry(v, guir.EpsMode));
-                    bprog.enqueueExternalEvent(new ADCSTelemetry(guir.AdcSMode, guir.angularRate));
+                    bprog.enqueueExternalEvent(new EPSTelemetry(v, guir.EpsMode, isActivePass.get()));
+                    bprog.enqueueExternalEvent(new ADCSTelemetry(guir.AdcSMode, guir.angularRate, isActivePass.get()));
             }
         };
         

@@ -6,7 +6,7 @@ import java.util.Objects;
 /**
  * Telemetry event for the Electronic Power Supply system.
  */
-public class EPSTelemetry extends BEvent {
+public class EPSTelemetry extends AbstractTelemetry {
     
     public enum EPSMode {
         Good, Low, Critical
@@ -14,17 +14,20 @@ public class EPSTelemetry extends BEvent {
     
     public final int vBatt;
     public final String currentEPSMode;
+    public final EPSMode mode;
 
-    public EPSTelemetry(int vBatt, EPSMode currentEPSMode) {
-        super("EPSTelemetry");
+    public EPSTelemetry(int vBatt, EPSMode currentEPSMode, boolean isActivePass) {
+        super("EPSTelemetry", isActivePass);
         this.vBatt = vBatt;
         this.currentEPSMode = currentEPSMode.name();
+        mode = currentEPSMode;
     }
 
     @Override
     public int hashCode() {
         int hash = 7;
         hash = 97 * hash + this.vBatt;
+        hash = 29 * hash + this.currentEPSMode.hashCode();
         return hash;
     }
 
@@ -43,7 +46,8 @@ public class EPSTelemetry extends BEvent {
         if (this.vBatt != other.vBatt) {
             return false;
         }
-        return Objects.equals(this.currentEPSMode, other.currentEPSMode);
+        return Objects.equals(this.currentEPSMode, other.currentEPSMode)
+                && equalsAsTelemetry(other);
     }
 
     @Override
