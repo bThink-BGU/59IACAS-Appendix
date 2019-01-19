@@ -51,7 +51,7 @@ public class SimSatVerification {
             VerificationResult result = vfr.verify(bprog);
             System.out.println("Verification done.");
             System.out.println("States scanned: " + result.getScannedStatesCount());
-            System.out.println("Time: " + result.getTimeMillies());
+            System.out.printf("Time: %,d ms\n", result.getTimeMillies());
             if ( result.isViolationFound() ) {
                 System.out.println("Violation found");
                 Violation violation = result.getViolation().get();
