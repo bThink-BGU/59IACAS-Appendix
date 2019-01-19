@@ -18,11 +18,11 @@ import javax.swing.border.EmptyBorder;
  */
 public class EnumStatusDisplay<T extends Enum> extends JComponent {
     
-    private Class<T> presentedEnum;
+    private final Class<T> presentedEnum;
     
     private T currentValue;
     
-    private Map<T,JLabel> labels;
+    private final Map<T,JLabel> labels;
     
     public EnumStatusDisplay( Class<T> enumClz ) {
         presentedEnum = enumClz;
