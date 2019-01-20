@@ -8,7 +8,7 @@ import il.ac.bgu.cs.bp.bpjs.model.BProgram;
 import il.ac.bgu.cs.bp.bpjs.model.ResourceBProgram;
 import il.ac.bgu.cs.bp.iacas18.events.ADCSTelemetry;
 import il.ac.bgu.cs.bp.iacas18.events.EPSTelemetry;
-import il.ac.bgu.cs.bp.iacas18.events.StaticEvent;
+import il.ac.bgu.cs.bp.iacas18.events.StaticEvents;
 import il.ac.bgu.cs.bp.iacas18.gui.MainWindowCtrl;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Timer;
@@ -84,14 +84,14 @@ public class SimSat {
         });
 
         guir.pnl.btnPassStart.addActionListener(e -> {
-            bprog.enqueueExternalEvent(StaticEvent.ActivePass);
+            bprog.enqueueExternalEvent(StaticEvents.ActivePass);
             guir.pnl.btnPassStart.setEnabled(false);
             guir.pnl.btnPassEnd.setEnabled(true);
         });
 
         guir.pnl.btnPassEnd.addActionListener(e -> {
             if (rnr != null) {
-                rnr.getBProgram().enqueueExternalEvent(StaticEvent.PassDone);
+                rnr.getBProgram().enqueueExternalEvent(StaticEvents.PassDone);
                 guir.pnl.btnPassStart.setEnabled(true);
                 guir.pnl.btnPassEnd.setEnabled(false);
             }
@@ -129,49 +129,49 @@ public class SimSat {
                 
                 if ( ! isGo.get() ) throw new StopException();
                 
-                if (theEvent.equals(StaticEvent.SetEPSModeCritical)) {
+                if (theEvent.equals(StaticEvents.SetEPSModeCritical)) {
                     System.out.println("EPS Set To Critical");
                     invokeLater( ()->{
                         guir.EpsMode = EPSTelemetry.EPSMode.Critical;
                         guir.pnl.stsEpsMode.setValue(EPSTelemetry.EPSMode.Critical);
                     });
                 }
-                if (theEvent.equals(StaticEvent.SetEPSModeLow)) {
+                if (theEvent.equals(StaticEvents.SetEPSModeLow)) {
                     System.out.println("EPS Set To Low");
                     invokeLater( ()->{
                         guir.EpsMode = EPSTelemetry.EPSMode.Low;
                         guir.pnl.stsEpsMode.setValue(EPSTelemetry.EPSMode.Low);
                     });
                 }
-                if (theEvent.equals(StaticEvent.SetEPSModeGood)) {
+                if (theEvent.equals(StaticEvents.SetEPSModeGood)) {
                     System.out.println("EPS Set To Good");
                     invokeLater( ()->{
                         guir.EpsMode = EPSTelemetry.EPSMode.Good;
                         guir.pnl.stsEpsMode.setValue(EPSTelemetry.EPSMode.Good);
                     });
                 }
-                if (theEvent.equals(StaticEvent.SetADCSModeDetumbling)) {
+                if (theEvent.equals(StaticEvents.SetADCSModeDetumbling)) {
                     System.out.println("ADCS Set To Detumbling");
                     invokeLater( ()->{
                         guir.AdcSMode = ADCSTelemetry.ADCSMode.Detumbling;
                         guir.pnl.stsAdcsMode.setValue(ADCSTelemetry.ADCSMode.Detumbling);
                     });
                 }
-                if (theEvent.equals(StaticEvent.SetADCSModeSunPointing)) {
+                if (theEvent.equals(StaticEvents.SetADCSModeSunPointing)) {
                     System.out.println("ADCS Set To SunPointing");
                     invokeLater( ()->{
                         guir.AdcSMode = ADCSTelemetry.ADCSMode.SunPointing;
                         guir.pnl.stsAdcsMode.setValue(ADCSTelemetry.ADCSMode.SunPointing);
                     });
                 }
-                if (theEvent.equals(StaticEvent.SetADCSModePayloadPointing)) {
+                if (theEvent.equals(StaticEvents.SetADCSModePayloadPointing)) {
                     System.out.println("ADCS Set To PayloadPointing");
                     invokeLater( ()->{
                         guir.AdcSMode = ADCSTelemetry.ADCSMode.PayloadPointing;
                         guir.pnl.stsAdcsMode.setValue(ADCSTelemetry.ADCSMode.PayloadPointing);
                     });
                 }
-                if (theEvent.equals(StaticEvent.PassDone)) {
+                if (theEvent.equals(StaticEvents.PassDone)) {
                     System.out.println("PassDone requested");
                     isActivePass.set(false);
                     invokeLater( ()->{
@@ -179,7 +179,7 @@ public class SimSat {
                         guir.pnl.btnPassEnd.setEnabled(false);
                     });
                 }
-                if ( theEvent.equals(StaticEvent.ActivePass) ) {
+                if ( theEvent.equals(StaticEvents.ActivePass) ) {
                     isActivePass.set(true);
                 }
             }

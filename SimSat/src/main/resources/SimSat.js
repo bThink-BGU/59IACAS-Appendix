@@ -1,6 +1,7 @@
-/* global bp, EPSTelemetry, ADCSTelemetry, Packages */
+/* global bp, EPSTelemetry, ADCSTelemetry, StaticEvents, Packages */
 importPackage(Packages.il.ac.bgu.cs.bp.iacas18.events);
 importClass(Packages.il.ac.bgu.cs.bp.iacas18.events.EPSTelemetry);
+importClass(Packages.il.ac.bgu.cs.bp.iacas18.events.StaticEvents);
 
 ///////////////
 // Constants
@@ -26,14 +27,15 @@ bp.registerBThread("EPS - Turn ON/OFF logic", function () {
     var ePSTelem = bp.sync({waitFor: EPSTelem});
     if (ePSTelem.vBatt >= GOOD_MIN) {
         bp.sync({waitFor: EPSTelem, 
-            request: bp.Event("SetEPSModeGood")});
+                 request: StaticEvents.SetEPSModeGood});
     } else if (ePSTelem.vBatt >= LOW_MIN) {
         bp.sync({waitFor: EPSTelem, 
-            request: bp.Event("SetEPSModeLow")});
+                 request: StaticEvents.SetEPSModeLow});
     } else {
         bp.sync({waitFor: EPSTelem, 
-            request: bp.Event("SetEPSModeCritical")});
+                 request: StaticEvents.SetEPSModeCritical});
     }
+    delete ePSTelem;
    
     // ongoing control loop
     while (true) {
@@ -41,24 +43,24 @@ bp.registerBThread("EPS - Turn ON/OFF logic", function () {
         switch ( ePSTelem.mode ) {
             case EPSTelemetry.EPSMode.Good: if (ePSTelem.vBatt < GOOD_MIN) {
                 bp.sync({waitFor: EPSTelem, 
-                    request: bp.Event("SetEPSModeLow")});
+                    request: StaticEvents.SetEPSModeLow});
                 }
                 break;
                 
             case EPSTelemetry.EPSMode.Low: 
                 if (ePSTelem.vBatt > LOW_MAX) {
                 bp.sync({waitFor: EPSTelem, 
-                    request: bp.Event("SetEPSModeGood")});
+                    request: StaticEvents.SetEPSModeGood});
                 }
                 if (ePSTelem.vBatt < LOW_MIN) {
                     bp.sync({waitFor: EPSTelem, 
-                        request: bp.Event("SetEPSModeCritical")});
+                        request: StaticEvents.SetEPSModeCritical});
                 }
                 break;
                 
             case EPSTelemetry.EPSMode.Critical: 
                 if (ePSTelem.vBatt > CRITICAL_MAX) {
-                    bp.sync({request: bp.Event("SetEPSModeLow")});
+                    bp.sync({request: StaticEvents.SetEPSModeLow});
                 }
                 break;
         }
@@ -78,7 +80,7 @@ bp.registerBThread("ADCS Mode Switch logic", function () {
             case ADCSTelemetry.ADCSMode.Detumbling:
                 if (aDCSEvent.angularRate == "Low" && aDCSEvent.isActivePass) {
                     bp.sync({waitFor: ADCSTelem,
-                             request: bp.Event("SetADCSModePayloadPointing")});
+                             request: StaticEvents.SetADCSModePayloadPointing});
                 } else if (aDCSEvent.angularRate == "Low") {
                     bp.sync({waitFor: ADCSTelem,
                              request: bp.Event("SetADCSModeSunPointing")});
@@ -87,19 +89,19 @@ bp.registerBThread("ADCS Mode Switch logic", function () {
             case ADCSTelemetry.ADCSMode.SunPointing:
                 if (aDCSEvent.angularRate == "Low" && aDCSEvent.isActivePass) {
                     bp.sync({waitFor: ADCSTelem,
-                             request: bp.Event("SetADCSModePayloadPointing")});
+                             request: StaticEvents.SetADCSModePayloadPointing});
                 } else if (aDCSEvent.angularRate == "High") {
                     bp.sync({waitFor: ADCSTelem,
-                        request: bp.Event("SetADCSModeDetumbling")});
+                        request: StaticEvents.SetADCSModeDetumbling});
                 }
                 break;
             case ADCSTelemetry.ADCSMode.PayloadPointing:
                 if (aDCSEvent.angularRate == "Low" && !aDCSEvent.isActivePass) {
                     bp.sync({waitFor: ADCSTelem,
-                        request: bp.Event("SetADCSModeSunPointing")});
+                        request: StaticEvents.SetADCSModeSunPointing});
                 } else if (aDCSEvent.angularRate == "High") {
                     bp.sync({waitFor: ADCSTelem,
-                        request: bp.Event("SetADCSModeDetumbling")});
+                        request: StaticEvents.SetADCSModeDetumbling});
                 }
                 break;
         }

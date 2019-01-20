@@ -3,7 +3,7 @@ package il.ac.bgu.cs.bp.iacas18.gui;
 import il.ac.bgu.cs.bp.bpjs.model.BEvent;
 import il.ac.bgu.cs.bp.iacas18.events.EPSTelemetry;
 import il.ac.bgu.cs.bp.iacas18.events.ADCSTelemetry;
-import il.ac.bgu.cs.bp.iacas18.events.StaticEvent;
+import il.ac.bgu.cs.bp.iacas18.events.StaticEvents;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -145,7 +145,7 @@ class EventRenderer implements ListCellRenderer<BEvent> {
         pnl.setBorder( new EmptyBorder(2,4,2,4) );
         colors.put(ADCSTelemetry.class, new Color(242,220,222));
         colors.put(EPSTelemetry.class, new Color(237,198,193));
-        colors.put(StaticEvent.class, new Color(221,242,220));
+        colors.put(StaticEvents.class, new Color(221,242,220));
     }
     
     @Override
