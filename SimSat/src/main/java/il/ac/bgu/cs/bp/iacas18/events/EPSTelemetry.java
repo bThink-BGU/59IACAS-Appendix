@@ -52,7 +52,9 @@ public class EPSTelemetry extends AbstractTelemetry {
 
     @Override
     public String toString() {
-        return "[EPSTelemetry vBatt:" + vBatt + ", currentEPSMode:" + currentEPSMode + ']';
+        return "[EPSTelemetry vBatt:" + vBatt 
+             + " currentEPSMode:" + currentEPSMode 
+             + " activePass:" + isActivePass + ']';
     }
     
     

@@ -106,29 +106,3 @@ bp.registerBThread("ADCS Mode Switch logic", function () {
     }
 });
 
-bp.registerBThread("EPS & ADCS Integrator", function () {
-    while (true) {
-        var ePSTelem2 = bp.sync({waitFor: EPSTelem});
-        while ( ePSTelem2.currentEPSMode == "Low" || 
-                ePSTelem2.currentEPSMode == "Critical" ) {
-            if ( ePSTelem2.isActivePass ) {
-                bp.sync({waitFor: ADCSTelem,
-                         request: bp.Event("PassDone"),
-                           block: bp.Event("SetADCSModePayloadPointing")
-                });
-            }
-            var aDCSEvent2 = bp.sync({waitFor: ADCSTelem,
-                block: bp.Event("SetADCSModePayloadPointing")});
-            if (aDCSEvent2.currentADCSMode == "PayloadPointing") {
-                bp.sync({waitFor: ADCSTelem,
-                         request: bp.Event("SetADCSModeSunPointing"),
-                           block: bp.Event("SetADCSModePayloadPointing")
-                });
-            }
-            var ePSTelem2 = bp.sync({waitFor: EPSTelem,
-                block: bp.Event("SetADCSModePayloadPointing")
-            });
-        }
-    }
-});
-

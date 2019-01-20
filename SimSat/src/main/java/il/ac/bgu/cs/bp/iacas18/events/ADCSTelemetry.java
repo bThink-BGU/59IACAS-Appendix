@@ -56,7 +56,9 @@ public class ADCSTelemetry extends AbstractTelemetry {
 
     @Override
     public String toString() {
-        return "[ADCSTelemetry currentADCSMode:" + currentADCSMode + ", angularRate:" + angularRate + ']';
+        return "[ADCSTelemetry currentADCSMode:" + currentADCSMode 
+             + " angularRate:" + angularRate
+             + " activePass:" + isActivePass + ']';
     }
     
     

@@ -12,13 +12,17 @@ importClass(Packages.il.ac.bgu.cs.bp.iacas18.events.ADCSTelemetry);
  * start or end active passes, and the battery voltage does not follow any pattern.
  */
 
+var ACTIVE_PASSES = [false,true];
+
 // Generate all possible EPS Telemetries
 var EPS_MODES = EPSTelemetry.EPSMode.values();
 var possibleEPSes = [];
 for ( var vBatt=0; vBatt <= 100; vBatt++ ) {
     for ( var modeIdx in EPS_MODES ) {
-        for ( var activePass in [0,1] ) {
-            possibleEPSes.push( EPSTelemetry(vBatt, EPS_MODES[modeIdx], (activePass===1)) );
+        for ( var activePassIdx in ACTIVE_PASSES ) {
+            possibleEPSes.push( EPSTelemetry(vBatt, 
+                                            EPS_MODES[modeIdx], 
+                                            ACTIVE_PASSES[activePassIdx]) );
         }
     }
 }
@@ -29,10 +33,10 @@ var ANGULAR_RATES = ADCSTelemetry.AngularRate.values();
 var possibleADCSes = [];
 for ( var adcsModeIdx in ADCS_MODES ) {
     for ( var angularRateIdx in ANGULAR_RATES ) {
-        for ( var activePass in [0,1] ) {
+        for ( var activePassIdx in ACTIVE_PASSES ) {
             possibleADCSes.push( ADCSTelemetry(ADCS_MODES[adcsModeIdx], 
                                                 ANGULAR_RATES[angularRateIdx],
-                                                (activePass===1)) );
+                                                ACTIVE_PASSES[activePassIdx]) );
         }
     }
 }
