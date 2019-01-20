@@ -1,0 +1,57 @@
+/v/ verification of 'SimSat.js+SimSatRequirements.js+FullyRandomEnvironment.js' started
+[BP][Info] possibleEPSes.length=606
+[BP][Info] possibleADCSes.length=12
+INSTANCES = {ActivePass=[BEvent name:ActivePass], PassDone=[BEvent name:PassDone], SetADCSModeDetumbling=[BEvent name:SetADCSModeDetumbling], SetADCSModePayloadPointing=[BEvent name:SetADCSModePayloadPointing], SetADCSModeSunPointing=[BEvent name:SetADCSModeSunPointing], SetEPSModeCritical=[BEvent name:SetEPSModeCritical], SetEPSModeGood=[BEvent name:SetEPSModeGood], SetEPSModeLow=[BEvent name:SetEPSModeLow], Tick=[BEvent name:Tick]}
+/v/ verification of SimSat.js+SimSatRequirements.js+FullyRandomEnvironment.js done
+Verification done.
+States scanned: 41
+Time: 1,272 ms
+Violation found
+Failed assertion on b-thread NeverPointingOnLow: Satellite is using the payload while it should conserve energy
+[BEvent name:SetADCSModeDetumbling]
+[EPSTelemetry vBatt:12 currentEPSMode:Good activePass:true]
+[BEvent name:SetEPSModeCritical]
+[ADCSTelemetry currentADCSMode:Detumbling angularRate:Low activePass:false]
+[BEvent name:SetADCSModeSunPointing]
+[EPSTelemetry vBatt:76 currentEPSMode:Low activePass:true]
+[BEvent name:SetEPSModeGood]
+[ADCSTelemetry currentADCSMode:SunPointing angularRate:High activePass:true]
+[BEvent name:SetADCSModeDetumbling]
+[EPSTelemetry vBatt:60 currentEPSMode:Low activePass:true]
+[ADCSTelemetry currentADCSMode:PayloadPointing angularRate:High activePass:true]
+[BEvent name:SetADCSModeDetumbling]
+[EPSTelemetry vBatt:56 currentEPSMode:Critical activePass:false]
+[BEvent name:SetEPSModeLow]
+[ADCSTelemetry currentADCSMode:Detumbling angularRate:High activePass:true]
+[EPSTelemetry vBatt:10 currentEPSMode:Good activePass:false]
+[BEvent name:SetEPSModeLow]
+[ADCSTelemetry currentADCSMode:Detumbling angularRate:Low activePass:true]
+[BEvent name:SetADCSModePayloadPointing]
+[EPSTelemetry vBatt:2 currentEPSMode:Good activePass:true]
+[BEvent name:SetEPSModeLow]
+[ADCSTelemetry currentADCSMode:PayloadPointing angularRate:High activePass:false]
+[BEvent name:SetADCSModeDetumbling]
+[EPSTelemetry vBatt:90 currentEPSMode:Good activePass:true]
+[ADCSTelemetry currentADCSMode:SunPointing angularRate:Low activePass:false]
+[EPSTelemetry vBatt:17 currentEPSMode:Critical activePass:true]
+[ADCSTelemetry currentADCSMode:PayloadPointing angularRate:Low activePass:false]
+[BEvent name:SetADCSModeSunPointing]
+[EPSTelemetry vBatt:92 currentEPSMode:Critical activePass:true]
+[BEvent name:SetEPSModeLow]
+[ADCSTelemetry currentADCSMode:Detumbling angularRate:Low activePass:false]
+[BEvent name:SetADCSModeSunPointing]
+[EPSTelemetry vBatt:4 currentEPSMode:Critical activePass:false]
+[ADCSTelemetry currentADCSMode:SunPointing angularRate:Low activePass:false]
+[EPSTelemetry vBatt:42 currentEPSMode:Low activePass:false]
+[ADCSTelemetry currentADCSMode:Detumbling angularRate:High activePass:true]
+[EPSTelemetry vBatt:13 currentEPSMode:Low activePass:true]
+[BEvent name:SetEPSModeCritical]
+[ADCSTelemetry currentADCSMode:SunPointing angularRate:Low activePass:true]
+[BEvent name:SetADCSModePayloadPointing]
+------------------------------------------------------------------------
+BUILD SUCCESS
+------------------------------------------------------------------------
+Total time: 2.124 s
+Finished at: 2019-01-20T17:18:15+02:00
+Final Memory: 12M/619M
+------------------------------------------------------------------------

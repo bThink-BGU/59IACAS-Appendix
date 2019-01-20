@@ -1,0 +1,44 @@
+/v/ verification of 'SimSat.js+SimSatRequirements.js+SaneEnvironment.js' started
+INSTANCES = {ActivePass=[BEvent name:ActivePass], PassDone=[BEvent name:PassDone], SetADCSModeDetumbling=[BEvent name:SetADCSModeDetumbling], SetADCSModePayloadPointing=[BEvent name:SetADCSModePayloadPointing], SetADCSModeSunPointing=[BEvent name:SetADCSModeSunPointing], SetEPSModeCritical=[BEvent name:SetEPSModeCritical], SetEPSModeGood=[BEvent name:SetEPSModeGood], SetEPSModeLow=[BEvent name:SetEPSModeLow], Tick=[BEvent name:Tick]}
+/v/ verification of SimSat.js+SimSatRequirements.js+SaneEnvironment.js done
+Verification done.
+States scanned: 30
+Time: 929 ms
+Violation found
+Failed assertion on b-thread NeverPointingOnLow: Satellite is using the payload while it should conserve energy
+[BEvent name:SetADCSModeDetumbling]
+[BEvent name:EnvSetAngularRateLow]
+[BEvent name:PassDone]
+[EPSTelemetry vBatt:1 currentEPSMode:Good activePass:false]
+[BEvent name:SetEPSModeCritical]
+[ADCSTelemetry currentADCSMode:Detumbling angularRate:Low activePass:false]
+[BEvent name:SetADCSModeSunPointing]
+[EPSTelemetry vBatt:2 currentEPSMode:Critical activePass:false]
+[ADCSTelemetry currentADCSMode:SunPointing angularRate:Low activePass:false]
+[EPSTelemetry vBatt:3 currentEPSMode:Critical activePass:false]
+[ADCSTelemetry currentADCSMode:SunPointing angularRate:Low activePass:false]
+[EPSTelemetry vBatt:4 currentEPSMode:Critical activePass:false]
+[ADCSTelemetry currentADCSMode:SunPointing angularRate:Low activePass:false]
+[EPSTelemetry vBatt:5 currentEPSMode:Critical activePass:false]
+[ADCSTelemetry currentADCSMode:SunPointing angularRate:Low activePass:false]
+[EPSTelemetry vBatt:6 currentEPSMode:Critical activePass:false]
+[ADCSTelemetry currentADCSMode:SunPointing angularRate:Low activePass:false]
+[EPSTelemetry vBatt:7 currentEPSMode:Critical activePass:false]
+[ADCSTelemetry currentADCSMode:SunPointing angularRate:Low activePass:false]
+[EPSTelemetry vBatt:8 currentEPSMode:Critical activePass:false]
+[ADCSTelemetry currentADCSMode:SunPointing angularRate:Low activePass:false]
+[EPSTelemetry vBatt:9 currentEPSMode:Critical activePass:false]
+[ADCSTelemetry currentADCSMode:SunPointing angularRate:Low activePass:false]
+[EPSTelemetry vBatt:10 currentEPSMode:Critical activePass:false]
+[ADCSTelemetry currentADCSMode:SunPointing angularRate:Low activePass:false]
+[BEvent name:ActivePass]
+[EPSTelemetry vBatt:11 currentEPSMode:Critical activePass:true]
+[ADCSTelemetry currentADCSMode:SunPointing angularRate:Low activePass:true]
+[BEvent name:SetADCSModePayloadPointing]
+------------------------------------------------------------------------
+BUILD SUCCESS
+------------------------------------------------------------------------
+Total time: 2.350 s
+Finished at: 2019-01-20T17:34:55+02:00
+Final Memory: 18M/494M
+------------------------------------------------------------------------

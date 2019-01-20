@@ -70,7 +70,7 @@ bp.registerBThread("EPS - Turn ON/OFF logic", function () {
 bp.registerBThread("ADCS Mode Switch logic", function () {
 
     /* Init Deployment*/
-    bp.sync({request: bp.Event("SetADCSModeDetumbling")});
+    bp.sync({request: StaticEvents.SetADCSModeDetumbling});
 
     /* ongoing */
     while (true) {
@@ -83,7 +83,7 @@ bp.registerBThread("ADCS Mode Switch logic", function () {
                              request: StaticEvents.SetADCSModePayloadPointing});
                 } else if (aDCSEvent.angularRate == "Low") {
                     bp.sync({waitFor: ADCSTelem,
-                             request: bp.Event("SetADCSModeSunPointing")});
+                             request: StaticEvents.SetADCSModeSunPointing});
                 }
                 break;
             case ADCSTelemetry.ADCSMode.SunPointing:
@@ -104,6 +104,32 @@ bp.registerBThread("ADCS Mode Switch logic", function () {
                         request: StaticEvents.SetADCSModeDetumbling});
                 }
                 break;
+        }
+    }
+});
+
+bp.registerBThread("EPS & ADCS Integrator", function () {
+    while (true) {
+        var ePSTelem2 = bp.sync({waitFor: EPSTelem});
+        while ( ePSTelem2.currentEPSMode == "Low" || 
+                ePSTelem2.currentEPSMode == "Critical" ) {
+            if ( ePSTelem2.isActivePass ) {
+                bp.sync({waitFor: ADCSTelem,
+                         request: StaticEvents.PassDone,
+                           block: StaticEvents.SetADCSModePayloadPointing
+                });
+            }
+            var aDCSEvent2 = bp.sync({waitFor: ADCSTelem,
+                block: bp.Event("SetADCSModePayloadPointing")});
+            if (aDCSEvent2.currentADCSMode == "PayloadPointing") {
+                bp.sync({waitFor: ADCSTelem,
+                         request: StaticEvents.SetADCSModeSunPointing,
+                           block: StaticEvents.SetADCSModePayloadPointing
+                });
+            }
+            var ePSTelem2 = bp.sync({waitFor: EPSTelem,
+                block: StaticEvents.SetADCSModePayloadPointing
+            });
         }
     }
 });
